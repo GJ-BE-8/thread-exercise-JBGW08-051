@@ -18,8 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class App
 {
-    public static void main( String[] args )
-    {
+    public static void main( String[] args ) throws InterruptedException {
         //counterHandlerA 객체를 생성 합니다. countMaxSize : 10
         CounterHandler counterHandlerA = new CounterHandler(10l);
         //threadA 생성시 counterHandlerA 객체를 paramter로 전달 합니다.
@@ -45,11 +44,21 @@ public class App
         log.debug("threadB-state:{}",threadB.getState());
 
         //TODO#1 Main Thread가 threadA, ThreadB가 종료될 때 까지 대기 합니다. Thread.yield를 사용 합니다.
-        Thread.yield();
-        // threadA, threadB가 종료되면 'Application exit!' message를 출력 합니다.
-        if(threadA.getState() == Thread.State.TERMINATED && threadB.getState() == Thread.State.TERMINATED) {
-            log.debug("Application exit!");
+        while(true){
+            Thread.yield();
+            threadA.join();
+            threadB.join();
+            if(threadA.getState() == Thread.State.TERMINATED && threadB.getState() == Thread.State.TERMINATED){
+                log.debug("Application exit!");
+                break;
+            }
         }
+
+        // threadA, threadB가 종료되면 'Application exit!' message를 출력 합니다.
+
+
+
+
 
 
     }
